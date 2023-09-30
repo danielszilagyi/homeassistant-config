@@ -1,0 +1,509 @@
+rest:
+  - resource: http://inverter/real_time_data.xml
+    sensor:
+      - name: "SAJ"
+        json_attributes_path: "$.real_time_data"
+        value_template: "OK"
+        json_attributes:
+          - "state"
+          - "Vac_l1"
+          - "Vac_l2"
+          - "Vac_l3"
+          - "Iac_l1"
+          - "Iac_l2"
+          - "Iac_l3"
+          - "Freq1"
+          - "p-ac"
+          - "temp"
+          - "e-today"
+          - "e-total"
+          - "CO2"
+          - "v-pv1"
+          - "v-pv2"
+          - "maxPower"
+          - "i-pv11"
+          - "i-pv21"
+    scan_interval: 10
+sensor:  
+  - platform: linux_battery
+  - platform: systemmonitor
+    resources:
+      - type: disk_use_percent
+        arg: /config
+      - type: memory_free
+      - type: throughput_network_in
+        arg: enp0s25
+      - type: throughput_network_out
+        arg: enp0s25
+      - type: processor_use
+      - type: processor_temperature
+      - type: last_boot
+  #  - platform: dahua_vto
+  #    name: Kaputelefon
+  #    host: dahuavto
+  #    username: admin
+  #    password: !secret dahua
+  #    scan_interval: 5
+  - platform: filter
+    name: "HMV temperature filtered"
+    unique_id: sensor.hmv_temperature_filtered
+    entity_id: sensor.hmv_heater_temperature
+    filters:
+      - filter: outlier
+        window_size: 10
+        radius: 2.0
+      - filter: time_simple_moving_average
+        window_size: "00:02"
+        precision: 2
+  - platform: filter
+    name: "Outdoor temperature filtered"
+    entity_id: sensor.aussentemperatur
+    unique_id: sensor.outside_temperature
+    filters:
+      - filter: outlier
+        window_size: 10
+        radius: 2.0
+      - filter: time_simple_moving_average
+        window_size: "00:02"
+        precision: 2
+  - platform: radioactivity_hu
+  - platform: template
+    sensors:
+     today_power_generated:
+       friendly_name: Inverter Today power generated
+       unit_of_measurement: "kWh"
+       device_class: "energy"
+       value_template: >
+          {% if states('sensor.saj') == "unavailable" %}
+          {{states('sensor.today_power_generated') | float }}
+          {% else %}
+          {{ state_attr('sensor.saj', 'e-today') | float }}
+          {% endif %}
+     actual_power_generated:
+        friendly_name: Inverter Grid-connected power
+        value_template: "{{ state_attr('sensor.saj', 'p-ac') | float }}"
+        unit_of_measurement: "W"
+        device_class: "power"
+        unique_id: saj_power
+     inverter_temperature:
+        value_template: "{{ state_attr('sensor.saj', 'temp') | float }}"
+        friendly_name: Inverter temperature
+        unit_of_measurement: "°C"
+        device_class: "temperature"
+        unique_id: saj_temperature
+     co2_emission_reduction:
+       friendly_name: CO2 emission reduction
+       value_template: "{{ state_attr('sensor.saj', 'CO2') | float / 1000 }}"
+       unit_of_measurement: "ton"
+       device_class: "carbon_dioxide"
+       unique_id: co2_emission
+     voltage_pv1:
+       friendly_name: Inverter PV1 String Voltage
+       value_template: "{{ state_attr('sensor.saj', 'v-pv1') | float }}"
+       unit_of_measurement: "V"
+       device_class: "voltage"
+       unique_id: voltage_pv1
+     voltage_pv2:
+       friendly_name: Inverter PV2 String Voltage
+       value_template: "{{ state_attr('sensor.saj', 'v-pv2') | float }}"
+       unit_of_measurement: "V"
+       device_class: "voltage"
+       unique_id: voltage_pv2
+     amps_pv1:
+       friendly_name: Inverter PV1 String Current
+       value_template: "{{ state_attr('sensor.saj', 'i-pv11') | float }}"
+       unit_of_measurement: "A"
+       device_class: "current"
+       unique_id: amps_pv1
+     amps_pv2:
+       friendly_name: Inverter PV2 String Current
+       value_template: "{{ state_attr('sensor.saj', 'i-pv21') | float }}"
+       unit_of_measurement: "A"
+       device_class: "current"
+       unique_id: amps_pv2
+     voltage_l1:
+       friendly_name: Inverter L1 Voltage
+       value_template: "{{ state_attr('sensor.saj', 'Vac_l1') | float }}"
+       unit_of_measurement: "V"
+       device_class: "voltage"
+       unique_id: voltage_l1
+     voltage_l2:
+       friendly_name: Inverter L2 Voltage
+       value_template: "{{ state_attr('sensor.saj', 'Vac_l2') | float }}"
+       unit_of_measurement: "V"
+       device_class: "voltage"
+       unique_id: voltage_l2
+     voltage_l3:
+       friendly_name: Inverter L3 Voltage
+       value_template: "{{ state_attr('sensor.saj', 'Vac_l3') | float }}"
+       unit_of_measurement: "V"
+       device_class: "voltage"
+       unique_id: voltage_l3
+     amps_l1:
+       friendly_name: Inverter L1 Current
+       value_template: "{{ state_attr('sensor.saj', 'Iac_l1') | float }}"
+       unit_of_measurement: "A"
+       device_class: "current"
+       unique_id: amps_l1
+     amps_l2:
+       friendly_name: Inverter L2 Current
+       value_template: "{{ state_attr('sensor.saj', 'Iac_l2') | float }}"
+       unit_of_measurement: "A"
+       device_class: "current"
+       unique_id: amps_l2
+     amps_l3:
+       friendly_name: Inverter L3 Current
+       value_template: "{{ state_attr('sensor.saj', 'Iac_l3') | float }}"
+       unit_of_measurement: "A"
+       device_class: "current"
+       unique_id: amps_l3
+     inverter_freq:
+       friendly_name: Inverter Line Frequency
+       unique_id: inverter_freq
+       value_template: "{{ state_attr('sensor.saj', 'Freq1') | float }}"
+       unit_of_measurement: "Hz"
+       device_class: "power"
+     total_power_generated:
+       friendly_name: Inverter Total power generated
+       value_template: "{{ state_attr('sensor.saj', 'e-total') | float }}"
+       unit_of_measurement: "kWh"
+       device_class: "energy"
+     today_max_power:
+       friendly_name: Inverter today Pmax
+       value_template: "{{ state_attr('sensor.saj', 'maxPower') | float }}"
+       unit_of_measurement: "W"
+       device_class: power
+       unique_id: maxpower
+     hmv_temperature:
+       friendly_name: DHW temperature
+       unique_id: hmv_temperature
+       unit_of_measurement: "°C"
+       value_template: "{{ state_attr('climate.hmv_termosztat', 'local_temperature') }}"
+     dolgozo_trv_local:
+       unique_id: dolgozo_trv_local
+       unit_of_measurement: "°C"
+       value_template: "{{ state_attr('climate.dolgozo_trv', 'local_temperature') }}"
+     nappali_trv_local:
+       unique_id: nappali_trv_local
+       unit_of_measurement: "°C"
+       value_template: "{{ state_attr('climate.nappali_trv', 'local_temperature') }}"  
+     haloszoba_trv_local:
+       unique_id: haloszoba_trv_local
+       unit_of_measurement: "°C"
+       value_template: "{{ state_attr('climate.haloszoba_trv', 'local_temperature') }}"    
+     konyha_trv_local:
+       unique_id: konyha_trv_local
+       unit_of_measurement: "°C"
+       value_template: "{{ state_attr('climate.konyha_trv', 'local_temperature') }}"   
+     furdo_trv_local:
+       unique_id: furdo_trv_local
+       unit_of_measurement: "°C"
+       value_template: "{{ state_attr('climate.furdoszoba_trv', 'local_temperature') }}"   
+     vendegszoba_trv_local:
+       unique_id: vendegszoba_trv_local
+       unit_of_measurement: "°C"
+       value_template: "{{ state_attr('climate.vendegszoba_trv', 'local_temperature') }}"
+     power_pv1:
+       friendly_name: Solar PV1 Power
+       unique_id: power_pv1
+       unit_of_measurement: "W"
+       value_template: "{{ (states('sensor.voltage_pv1') | float * states('sensor.amps_pv1') | float) | round|int  }}"
+       availability_template: "{{ states('sensor.voltage_pv1') not in ['unknown', 'unavailable'] and states('sensor.amps_pv1') not in ['unknown', 'unavailable'] }}"
+     power_pv2:
+       friendly_name: Solar PV2 Power
+       unique_id: power_pv2
+       unit_of_measurement: "W"
+       value_template: "{{ (states('sensor.voltage_pv2') | float * states('sensor.amps_pv2') | float) | round|int }}"
+       availability_template: "{{ states('sensor.voltage_pv2') not in ['unknown', 'unavailable'] and states('sensor.amps_pv2') not in ['unknown', 'unavailable'] }}"
+     energy_estimated_next_hour:
+       friendly_name: Estimated Total Solar Production Next Hour
+       unique_id: solar_total_next_hour
+       unit_of_measurement: "kWh"
+       value_template: "{{ (states('sensor.energy_next_hour') | float + states('sensor.energy_next_hour_2') | float) }}"
+     energy_estimated_current_hour:
+       friendly_name: Estimated Total Solar Production Current Hour
+       unique_id: solar_total_current_hour
+       unit_of_measurement: "kWh"
+       value_template: "{{ (states('sensor.energy_current_hour') | float + states('sensor.energy_current_hour_2') | float) }}"
+     energy_estimated_production_today:
+       friendly_name: Estimated Total Solar Production Today
+       unique_id: solar_total_today
+       unit_of_measurement: "kWh"
+       value_template: "{{ (states('sensor.energy_production_today') | float + states('sensor.energy_production_today_2') | float) }}"
+     energy_estimated_production_tomorrow:
+       friendly_name: Estimated Total Solar Production Tomorrow
+       unique_id: solar_total_tomorrow
+       unit_of_measurement: "kWh"
+       value_template: "{{ (states('sensor.energy_production_tomorrow') | float + states('sensor.energy_production_tomorrow_2') | float) }}"
+     energy_production_now:
+       friendly_name: Total Solar Production Power
+       unique_id: solar_total_production_now
+       unit_of_measurement: "W"
+       value_template: "{{ (states('sensor.power_production_now') | float + states('sensor.power_production_now_2') | float) }}"
+     solar_total_power_dc:
+       friendly_name: Solar power DC side
+       unique_id: solar_total_dc_power
+       unit_of_measurement: "W"
+       value_template: "{{ (states('sensor.power_pv1') | float + states('sensor.power_pv2') | float) }}"
+       availability_template: "{{ states('sensor.power_pv1') not in ['unknown', 'unavailable'] and states('sensor.power_pv2') not in ['unknown', 'unavailable'] }}"
+     shelly_power_aggregated:
+       unique_id: em3_combined_power
+       unit_of_measurement: 'W'
+       friendly_name: EM3 combined power IO
+       value_template: "{{ (states('sensor.em3_channel_a_power') | float + states('sensor.em3_channel_b_power') | float + states ('sensor.em3_channel_c_power') | float) }}"          
+     sun_azimuth:
+        friendly_name: "Sun Azimuth"
+        unit_of_measurement: "°"
+        value_template: "{{ state_attr('sun.sun', 'azimuth')-21|round(0) }}"
+     teltocharge_voltage_l1:
+        friendly_name: TeltoCharge Voltage L1
+        unique_id: teltocharge_ul1
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.teltocharge_voltage', 'L1')|float(0) }}"
+        availability_template: "{{ states('sensor.teltocharge_voltage') not in ['unknown', 'unavailable'] }}"
+     teltocharge_voltage_l2:
+        friendly_name: TeltoCharge Voltage L2
+        unique_id: teltocharge_ul2
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.teltocharge_voltage', 'L2')|float(0) }}"
+        availability_template: "{{ states('sensor.teltocharge_voltage') not in ['unknown', 'unavailable'] }}"
+     teltocharge_voltage_l3:
+        friendly_name: TeltoCharge Voltage L3
+        unique_id: teltocharge_ul3
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.teltocharge_voltage', 'L3')|float(0) }}"
+        availability_template: "{{ states('sensor.teltocharge_voltage') not in ['unknown', 'unavailable'] }}"
+     teltocharge_voltage_n:
+        friendly_name: TeltoCharge Voltage N
+        unique_id: teltocharge_un
+        unit_of_measurement: "V"
+        value_template: "{{ state_attr('sensor.teltocharge_voltage', 'N')|float(0) }}"
+        availability_template: "{{ states('sensor.teltocharge_voltage') not in ['unknown', 'unavailable'] }}"
+     teltocharge_amps_l1:
+        friendly_name: TeltoCharge Current L1
+        unique_id: teltocharge_il1
+        unit_of_measurement: "A"
+        value_template: "{{ state_attr('sensor.teltocharge_current_import', 'L1')|float(0)|round(1) }}"
+        availability_template: "{{ states('sensor.teltocharge_current_import') not in ['unknown', 'unavailable'] }}"
+     teltocharge_amps_l2:
+        friendly_name: TeltoCharge Current L2
+        unique_id: teltocharge_il2
+        unit_of_measurement: "A"
+        value_template: "{{ state_attr('sensor.teltocharge_current_import', 'L2')|float(0)|round(1) }}"
+        availability_template: "{{ states('sensor.teltocharge_current_import') not in ['unknown', 'unavailable'] }}"
+     teltocharge_amps_l3:
+        friendly_name: TeltoCharge Current L3
+        unique_id: teltocharge_il3
+        unit_of_measurement: "A"
+        value_template: "{{ state_attr('sensor.teltocharge_current_import', 'L3')|float(0)|round(1) }}"
+        availability_template: "{{ states('sensor.teltocharge_current_import') not in ['unknown', 'unavailable'] }}"
+     teltocharge_current_power:
+       friendly_name: TeltoCharge Power
+       unique_id: teltocharge_power
+       unit_of_measurement: "W"
+       value_template: "{{ (states('sensor.teltocharge_voltage_l1') | float(0) * states('sensor.teltocharge_current_import') | float(0) / 3 ) + (states('sensor.teltocharge_voltage_l2') | float(0) * states('sensor.teltocharge_current_import') | float(0) / 3) + (states('sensor.teltocharge_voltage_l3') | float(0) * states('sensor.teltocharge_current_import')|float(0) / 3|int)|round }}"
+       availability_template: "{{ states('sensor.teltocharge_voltage') not in ['unknown', 'unavailable'] and states('sensor.teltocharge_current_import') not in ['unknown', 'unavailable'] }}"
+     e_up_charging_at_home:
+        friendly_name: "e-Up! charging at home"
+        value_template: >-
+          {% if is_state('switch.e_up_charging', 'on') and is_state('device_tracker.e_up_position','home') %}
+            on
+          {% elif is_state('switch.e_up_charging', 'on') and is_state('device_tracker.e_up_position','away') %}
+            off
+          {% elif is_state('switch.e_up_charging', 'off') and is_state('device_tracker.e_up_position','home') %}
+            off
+          {% else %}
+            {{ states('sensor.e_up_charging_at_home') }}
+          {% endif %}
+     letsencrypt_days:
+        friendly_name: "HA cert expiry in days"
+        unique_id: letsencrypt_days
+        unit_of_measurement: "days"
+        value_template: "{{ ((as_timestamp(states('sensor.cert_expiry_timestamp')) - as_timestamp(now())) / 60 / 60 / 24 ) | int }}"      
+  - platform: snmp
+    name: ups_smart_capacity
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.2.2.1.0
+    accept_errors: true
+    unit_of_measurement: "%"
+  - platform: snmp
+    name: ups_smart_runtime_remaining
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.2.2.3.0
+    accept_errors: true
+    value_template: >-
+      {% set time = (value | int) / 100 | int %}
+      {% set minutes = ((time % 3600) / 60) | int %}
+      {% set hours = ((time % 86400) / 3600) | int %}
+      {% set days = (time / 86400) | int %}
+
+      {%- if time < 60 -%}
+        Less than a minute
+        {%- else -%}
+        {%- if days > 0 -%}
+          {{ days }}d
+        {%- endif -%}
+        {%- if hours > 0 -%}
+          {%- if days > 0 -%}
+            {{ ' ' }}
+          {%- endif -%}
+          {{ hours }}h
+        {%- endif -%}
+        {%- if minutes > 0 -%}
+          {%- if days > 0 or hours > 0 -%}
+            {{ ' ' }}
+          {%- endif -%}
+          {{ minutes }}m
+        {%- endif -%}
+      {%- endif -%}
+  - platform: snmp
+    name: ups_smart_load_percentage
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.4.2.3.0
+    accept_errors: true
+    unit_of_measurement: "%"
+  - platform: snmp
+    name: ups_smart_battery_temperature
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.2.2.2.0
+    accept_errors: true
+    unit_of_measurement: "°C"
+  - platform: snmp
+    name: ups_smart_battery_status
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.2.2.4.0
+    accept_errors: true
+    value_template: >-
+      {%if value == '1' %}
+        Good
+      {% elif value == '2' %}
+        Failed
+      {% endif %}
+  - platform: snmp
+    name: ups_smart_type
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.1.1.1.0
+    accept_errors: true
+  - platform: snmp
+    name: ups_smart_input_voltage
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.3.2.1.0
+    accept_errors: true
+    unit_of_measurement: "V"
+  - platform: snmp
+    name: ups_smart_last_transfer_reason
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.3.2.5.0
+    accept_errors: true
+    value_template: >-
+      {%if value == '1' %}
+        No events
+      {% elif value == '2' %}
+        High line voltage
+      {% elif value == '3' %}
+        Brownout
+      {% elif value == '4' %}
+        Loss of mains power
+      {% elif value == '5' %}
+        Small temporary power drop
+      {% elif value == '6' %}
+        Large temporary power drop
+      {% elif value == '7' %}
+        Small spike
+      {% elif value == '8' %}
+        Large spike
+      {% elif value == '9' %}
+        UPS self test
+      {% elif value == '10' %}
+        Excessive input voltage fluctuation
+      {% endif %}
+  - platform: snmp
+    name: ups_smart_output_load
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.4.2.3.0
+    accept_errors: true
+    unit_of_measurement: "%"
+  - platform: snmp
+    name: ups_smart_output_current
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.4.2.4.0
+    accept_errors: true
+    unit_of_measurement: "A"
+  - platform: snmp
+    name: ups_smart_last_self_test_result
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.7.2.3.0
+    accept_errors: true
+    value_template: >-
+      {%if value == '1' %}
+        OK
+      {% elif value == '2' %}
+        Failed
+      {% elif value == '3' %}
+        Invalid Test
+      {% elif value == '4' %}
+        Test In Progress
+      {% endif %}
+  - platform: snmp
+    name: ups_smart_last_self_test_date
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.7.2.4.0
+    accept_errors: true
+  - platform: snmp
+    name: ups_smart_communication_status
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.8.1.0
+    accept_errors: true
+    value_template: >-
+      {%if value == '1' %}
+        on
+      {% elif value == '2' %}
+        off
+      {% endif %}
+  - platform: snmp
+    name: ups_smart_status
+    host: ups
+    baseoid: 1.3.6.1.4.1.318.1.1.1.4.1.1.0
+    accept_errors: true
+    value_template: >-
+      {%if value == '1' %}
+        Unknown
+      {% elif value == '2' %}
+        On Line
+      {% elif value == '3' %}
+        On Battery
+      {% elif value == '4' %}
+        On Smart Boost
+      {% elif value == '5' %}
+        Timed Sleeping
+      {% elif value == '6' %}
+        Software Bypass
+      {% elif value == '7' %}
+        Off
+      {% elif value == '8' %}
+        Rebooting
+      {% elif value == '9' %}
+        Switched Bypass
+      {% elif value == '10' %}
+        Hardware Failure Bypass
+      {% elif value == '11' %}
+        Sleeping Until Power Returns
+      {% elif value == '12' %}
+        On Smart Trim
+      {% endif %}
+  - platform: hp_ilo
+    host: dl360ilo
+    username: view
+    password: !secret ilo-view
+    monitored_variables:
+      - name: CPU fanspeed
+        sensor_type: server_health
+        unit_of_measurement: "%"
+        value_template: '{{ ilo_data.fans["Fan 1"].speed[0] }}'
+      - name: Inlet temperature
+        sensor_type: server_health
+        unit_of_measurement: "°C"
+        value_template: '{{ ilo_data.temperature["01-Inlet Ambient"].currentreading[0] }}'
+      - name: Power-on hours
+        sensor_type: server_power_on_time
+        unit_of_measurement: "h"
