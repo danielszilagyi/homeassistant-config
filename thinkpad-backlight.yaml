@@ -1,0 +1,25 @@
+shell_command:
+  set_backlight_level: "sysctl /sys/class/backlight/intel_backlight/brightness={{ brightness|int * 18.8|int|default(4794) }}"
+  set_backlight_off: "echo 0 > /sys/class/backlight/intel_backlight/brightness"
+  set_backlight_on: "echo 4794 > /sys/class/backlight/intel_backlight/brightness"
+command_line:
+  - sensor:
+      name: Laptop Backlight Status
+      command: "cat /sys/class/backlight/intel_backlight/actual_brightness"
+      scan_interval: 10
+      unique_id: sensor.laptop_backlight_status
+light:
+  - platform: template
+    lights:
+      thinkpad_backlight:
+        friendly_name: "Thinkpad Backlight"
+        level_template: "{{ states('sensor.laptop_backlight_status')|int / 18.8|int }}"
+        value_template: "{{ states('sensor.laptop_backlight_status')|int > 0 }}"
+        turn_on:
+          service: shell_command.set_backlight_on
+        turn_off:
+          service: shell_command.set_backlight_off
+        set_level:
+          service: shell_command.set_backlight_level
+          data:
+            brightness: "{{ brightness }}"
