@@ -1,0 +1,63 @@
+- id: '1648587517651'
+  alias: Idojos
+  description: ''
+  trigger:
+  - platform: time
+    at: 09:58:00
+  condition:
+  - condition: state
+    entity_id: binary_sensor.gmiphone_focus
+    state: 'off'
+  action:
+  - service: tts.microsoft_say
+    data:
+      entity_id: media_player.mi_smart_speaker6668
+      message: Jó reggelt! A kinti hőmérséklet {{ (states('sensor.outside_temperature')
+        | float ) | round(1) }} celziuszfok,  ami napközben {{ (states('sensor.openweathermap_forecast_temperature')
+        | float ) | round(1) }} fok körüli értékre alakul. Most {% if states('weather.home_hourly')  ==
+        'clear-night' %} Tiszta éjszakai {% elif states('weather.home_hourly')  ==
+        'cloudy' %} Felhős {% elif states('weather.home_hourly')  == 'exceptional'
+        %} Kivételes {% elif states('weather.home_hourly')  == 'fog' %} Ködös {% elif  states('weather.home_hourly')  ==
+        'hail' %} Jeges {% elif states('weather.home_hourly')  == 'lightning' %} Viharos
+        {% elif states('weather.home_hourly')  == 'lightning-rainy' %} Viharos esős
+        {% elif states('weather.home_hourly')  == 'partlycloudy' %} Részben felhős
+        {% elif states('weather.home_hourly')  == 'pouring' %} Szakadó esős {% elif
+        states('weather.home_hourly')  == 'rainy' %} Esős {% elif states('weather.home_hourly')  ==
+        'snowy' %} Havas {% elif states('weather.home_hourly')  == 'snowy-rainy' %}
+        Havas esős {% elif states('weather.home_hourly')  == 'sunny' %} Napos {% elif
+        states('weather.home_hourly')  == 'windy' %} Szeles {% elif states('weather.home_hourly')  ==
+        'windy-variant' %} Szeles {% else %} Ismeretlen {% endif %} idő van, ezen
+        a {% if now().weekday() in (0,) %} hétfői {% elif now().weekday() in (1,)
+        %}  keddi {% elif now().weekday() in (2,) %} szerdai {% elif now().weekday()
+        in (3,) %} csütörtöki  {% elif now().weekday() in (4,) %} pénteki {% elif
+        now().weekday() in (5,) %} szombati  {% elif now().weekday() in (6,) %} vasárnapi
+        {% endif %} napon napközben {% if states('sensor.openweathermap_forecast_condition')  ==
+        'clear-night' %} Tiszta éjszakai {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'cloudy' %} Felhős {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'exceptional' %} Kivételes {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'fog' %} Ködös {% elif  states('sensor.openweathermap_forecast_condition')  ==
+        'hail' %} Jeges {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'lightning' %} Viharos {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'lightning-rainy' %} Viharos esős {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'partlycloudy' %} Részben felhős {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'pouring' %} Szakadó esős {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'rainy' %} Esős {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'snowy' %} Havas {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'snowy-rainy' %} Havas esős {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'sunny' %} Napos {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'windy' %} Szeles {% elif states('sensor.openweathermap_forecast_condition')  ==
+        'windy-variant' %} Szeles {% else %} Ismeretlen {% endif %} időjárásra számíthatunk.
+        {% if state_attr('weather.home_hourly', 'wind_speed') | int > 20 %} A szélsebesség
+        {{ state_attr('weather.home_hourly', 'wind_speed') }} kilométer per óra. {%
+        endif %} {% if states.weather.home.attributes.forecast[0].precipitation==0.0
+        %} A mai egy csapadékmentes nap lesz.  {% else %}  Körülbelül {{ states.weather.home.attributes.forecast[0].precipitation
+        }} milliméter csapadék várható.  {% endif %}  {% if states('sensor.hmv_temperature_filtered')
+        | int >20 %} A melegviz {{ states('sensor.hmv_temperature_filtered') }} fokos.
+        {% endif %}{% if now().weekday() in (0,) %} Ne felejtsük el, hogy ma ki kell
+        húzni a szemeteskukát is! {% endif %} Az autó töltöttsége {{ states('sensor.e_up_battery_level')
+        }} százalék,  és jelenleg {% if states('switch.e_up_charging') == 'on' %}
+        tölt {% elif states('binary_sensor.e_up_charging_cable_locked') == 'on' %}  készen
+        áll a töltésre  {% elif states ('binary_sensor.e_up_charging_cable_connected')
+        == 'on' %} befejeződött a töltés. {% else %} ismeretlen a töltés állapota
+        {% endif %}
+  mode: single
