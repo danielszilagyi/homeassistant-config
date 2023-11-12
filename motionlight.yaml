@@ -13,6 +13,7 @@ blueprint:
           device_class:
           - motion
           - occupancy
+          - presence
           multiple: false
     light_target:
       name: Light
