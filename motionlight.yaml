@@ -1,5 +1,5 @@
 blueprint:
-  name: Motion-activated Light-brightness
+  name: Motion-activated Light-brightness for Motion/Occupancy devices
   description: Turn the light on to brightness when motion is detected, depending
     on the selected time period, different brightness and turn-on time.
   domain: automation
