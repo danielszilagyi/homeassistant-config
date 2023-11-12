@@ -1,0 +1,7 @@
+{% if now().weekday() in (0,1,2,3,4) %}
+{{ states('input_boolean.ring_in_progress') == 'off' }}
+{% endif %}
+
+{% if now().weekday() in (5,6) %}
+{{ states('input_boolean.ring_in_progress') == 'off' and states('binary_sensor.gmiphone_focus') != 'on' and states('binary_sensor.gmiphone_focus') != 'on' }}
+{% endif %}
