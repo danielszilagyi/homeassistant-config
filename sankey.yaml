@@ -1,10 +1,9 @@
-square: false
-type: grid
+type: horizontal-stack
 cards:
   - height: 500
     unit_prefix: k
     round: 1
-    min_box_height: 3
+    min_box_height: 20
     min_box_distance: 5
     show_states: true
     show_units: true
@@ -22,6 +21,7 @@ cards:
               - sensor.szerverszoba_rack_power
               - sensor.nappali_entertainment_power
               - sensor.haloszoba_entertainment_power
+              - sensor.haloszoba_telefontolto_power
               - sensor.kert_lampa_power
               - sensor.dolgozo_pc_power
               - sensor.mosogep_plug_power
@@ -46,6 +46,7 @@ cards:
               - sensor.szerverszoba_rack_power
               - sensor.nappali_entertainment_power
               - sensor.haloszoba_entertainment_power
+              - sensor.haloszoba_telefontolto_power
               - sensor.kert_lampa_power
               - sensor.dolgozo_pc_power
               - sensor.mosogep_plug_power
@@ -97,6 +98,10 @@ cards:
             entity_id: sensor.haloszoba_entertainment_power
           - type: passthrough
             children:
+              - sensor.haloszoba_telefontolto_power
+            entity_id: sensor.haloszoba_telefontolto_power
+          - type: passthrough
+            children:
               - sensor.kert_lampa_power
             entity_id: sensor.kert_lampa_power
           - type: passthrough
@@ -161,6 +166,9 @@ cards:
             entity_id: sensor.haloszoba_entertainment_power
           - type: entity
             children: []
+            entity_id: sensor.haloszoba_telefontolto_power
+          - type: entity
+            children: []
             entity_id: sensor.kert_lampa_power
           - type: entity
             children: []
@@ -197,4 +205,3 @@ cards:
     min_state: 0
     show_icons: true
     title: Electricity
-columns: 1
