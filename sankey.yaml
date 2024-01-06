@@ -1,0 +1,76 @@
+type: custom:sankey-chart
+unit_prefix: k
+show_names: true
+wide: false
+sections:
+  - entities:
+      - entity_id: sensor.actual_power_generated
+        name: Solar
+        color: var(--success-color)
+        children:
+          - sensor.shelly_power_aggregated
+          - sensor.eloszoba_floor_power
+          - sensor.emelet_floor_power
+          - sensor.furdo_floor_power
+          - sensor.airfel_klima_power
+          - sensor.gree_klima_power_ab
+          - sensor.alagsor_radiator_power
+          - sensor.szerverszoba_rack_power
+          - sensor.nappali_entertainment_power
+          - sensor.haloszoba_entertainment_power
+          - sensor.kert_lampa_power
+          - sensor.dolgozo_pc_power
+          - sensor.mosogep_plug_power
+          - sensor.dolgozo_hp_power
+          - sensor.konyha_imac_power
+          - sensor.muhely_fagyaszto_plug_power
+          - sensor.alagsor_huto_plug_power
+          - sensor.teltocharge_power_active_import
+          - sensor.hmv_heater_power
+  - entities:
+      - entity_id: sensor.shelly_power_aggregated
+        name: Grid+Solar
+        color: cadetblue
+        children:
+          - sensor.eloszoba_floor_power
+          - sensor.emelet_floor_power
+          - sensor.furdo_floor_power
+          - sensor.airfel_klima_power
+          - sensor.gree_klima_power_ab
+          - sensor.alagsor_radiator_power
+          - sensor.szerverszoba_rack_power
+          - sensor.nappali_entertainment_power
+          - sensor.haloszoba_entertainment_power
+          - sensor.kert_lampa_power
+          - sensor.dolgozo_pc_power
+          - sensor.mosogep_plug_power
+          - sensor.dolgozo_hp_power
+          - sensor.konyha_imac_power
+          - sensor.muhely_fagyaszto_plug_power
+          - sensor.alagsor_huto_plug_power
+          - sensor.teltocharge_power_active_import
+          - sensor.hmv_heater_power
+          - other_power
+  - entities:
+      - sensor.eloszoba_floor_power
+      - sensor.emelet_floor_power
+      - sensor.furdo_floor_power
+      - sensor.airfel_klima_power
+      - sensor.gree_klima_power_ab
+      - sensor.alagsor_radiator_power
+      - sensor.szerverszoba_rack_power
+      - sensor.nappali_entertainment_power
+      - sensor.haloszoba_entertainment_power
+      - sensor.kert_lampa_power
+      - sensor.dolgozo_pc_power
+      - sensor.mosogep_plug_power
+      - sensor.dolgozo_hp_power
+      - sensor.konyha_imac_power
+      - sensor.muhely_fagyaszto_plug_power
+      - sensor.alagsor_huto_plug_power
+      - sensor.teltocharge_power_active_import
+      - sensor.hmv_heater_power
+      - entity_id: other_power
+        type: remaining_parent_state
+        name: Unmonitored
+        color: grey
