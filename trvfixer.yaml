@@ -1,0 +1,81 @@
+alias: TRV fixer
+description: ""
+trigger:
+  - platform: time_pattern
+    hours: /6
+condition:
+  - condition: state
+    entity_id: sensor.season
+    state:
+      - autumn
+      - winter
+action:
+  - variables:
+      nappali_trv: "{{ states('climate.nappali_trv') }}"
+      haloszoba_trv: "{{ states('climate.haloszoba_trv') }}"
+      konyha_trv: "{{ states('climate.konyha_trv') }}"
+      dolgozo_trv: "{{ states('climate.dolgozo_trv') }}"
+      vendegszoba_trv: "{{ states('climate.vendegszoba_trv') }}"
+  - service: climate.set_hvac_mode
+    metadata: {}
+    data:
+      hvac_mode: heat
+    target:
+      entity_id:
+        - climate.nappali_trv
+        - climate.haloszoba_trv
+        - climate.konyha_trv
+        - climate.dolgozo_trv
+        - climate.vendegszoba_trv
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 30
+      milliseconds: 0
+  - service: climate.set_hvac_mode
+    metadata: {}
+    data:
+      hvac_mode: "off"
+    target:
+      entity_id:
+        - climate.nappali_trv
+        - climate.haloszoba_trv
+        - climate.konyha_trv
+        - climate.dolgozo_trv
+        - climate.vendegszoba_trv
+  - delay:
+      hours: 0
+      minutes: 0
+      seconds: 30
+      milliseconds: 0
+  - service: climate.set_hvac_mode
+    metadata: {}
+    data:
+      hvac_mode: "{{ nappali_trv }}"
+    target:
+      entity_id: climate.nappali_trv
+  - service: climate.set_hvac_mode
+    metadata: {}
+    data:
+      hvac_mode: "{{ haloszoba_trv }}"
+    target:
+      entity_id: climate.haloszoba_trv
+  - service: climate.set_hvac_mode
+    metadata: {}
+    data:
+      hvac_mode: "{{ konyha_trv }}"
+    target:
+      entity_id: climate.konyha_trv
+  - service: climate.set_hvac_mode
+    metadata: {}
+    data:
+      hvac_mode: "{{ dolgozo_trv }}"
+    target:
+      entity_id: climate.dolgozo_trv
+  - service: climate.set_hvac_mode
+    metadata: {}
+    data:
+      hvac_mode: "{{ vendegszoba_trv }}"
+    target:
+      entity_id: climate.vendegszoba_trv
+mode: single
