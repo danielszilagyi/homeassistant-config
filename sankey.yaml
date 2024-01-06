@@ -1,76 +1,200 @@
-type: custom:sankey-chart
-unit_prefix: k
-show_names: true
-wide: false
-sections:
-  - entities:
-      - entity_id: sensor.actual_power_generated
-        name: Solar
-        color: var(--success-color)
-        children:
-          - sensor.shelly_power_aggregated
-          - sensor.eloszoba_floor_power
-          - sensor.emelet_floor_power
-          - sensor.furdo_floor_power
-          - sensor.airfel_klima_power
-          - sensor.gree_klima_power_ab
-          - sensor.alagsor_radiator_power
-          - sensor.szerverszoba_rack_power
-          - sensor.nappali_entertainment_power
-          - sensor.haloszoba_entertainment_power
-          - sensor.kert_lampa_power
-          - sensor.dolgozo_pc_power
-          - sensor.mosogep_plug_power
-          - sensor.dolgozo_hp_power
-          - sensor.konyha_imac_power
-          - sensor.muhely_fagyaszto_plug_power
-          - sensor.alagsor_huto_plug_power
-          - sensor.teltocharge_power_active_import
-          - sensor.hmv_heater_power
-  - entities:
-      - entity_id: sensor.shelly_power_aggregated
-        name: Grid+Solar
-        color: cadetblue
-        children:
-          - sensor.eloszoba_floor_power
-          - sensor.emelet_floor_power
-          - sensor.furdo_floor_power
-          - sensor.airfel_klima_power
-          - sensor.gree_klima_power_ab
-          - sensor.alagsor_radiator_power
-          - sensor.szerverszoba_rack_power
-          - sensor.nappali_entertainment_power
-          - sensor.haloszoba_entertainment_power
-          - sensor.kert_lampa_power
-          - sensor.dolgozo_pc_power
-          - sensor.mosogep_plug_power
-          - sensor.dolgozo_hp_power
-          - sensor.konyha_imac_power
-          - sensor.muhely_fagyaszto_plug_power
-          - sensor.alagsor_huto_plug_power
-          - sensor.teltocharge_power_active_import
-          - sensor.hmv_heater_power
-          - other_power
-  - entities:
-      - sensor.eloszoba_floor_power
-      - sensor.emelet_floor_power
-      - sensor.furdo_floor_power
-      - sensor.airfel_klima_power
-      - sensor.gree_klima_power_ab
-      - sensor.alagsor_radiator_power
-      - sensor.szerverszoba_rack_power
-      - sensor.nappali_entertainment_power
-      - sensor.haloszoba_entertainment_power
-      - sensor.kert_lampa_power
-      - sensor.dolgozo_pc_power
-      - sensor.mosogep_plug_power
-      - sensor.dolgozo_hp_power
-      - sensor.konyha_imac_power
-      - sensor.muhely_fagyaszto_plug_power
-      - sensor.alagsor_huto_plug_power
-      - sensor.teltocharge_power_active_import
-      - sensor.hmv_heater_power
-      - entity_id: other_power
-        type: remaining_parent_state
-        name: Unmonitored
-        color: grey
+square: false
+type: grid
+cards:
+  - height: 500
+    unit_prefix: k
+    round: 1
+    min_box_height: 3
+    min_box_distance: 5
+    show_states: true
+    show_units: true
+    sections:
+      - entities:
+          - type: entity
+            children:
+              - sensor.shelly_power_aggregated
+              - sensor.eloszoba_floor_power
+              - sensor.emelet_floor_power
+              - sensor.furdo_floor_power
+              - sensor.airfel_klima_power
+              - sensor.gree_klima_power_ab
+              - sensor.alagsor_radiator_power
+              - sensor.szerverszoba_rack_power
+              - sensor.nappali_entertainment_power
+              - sensor.haloszoba_entertainment_power
+              - sensor.kert_lampa_power
+              - sensor.dolgozo_pc_power
+              - sensor.mosogep_plug_power
+              - sensor.dolgozo_hp_power
+              - sensor.konyha_imac_power
+              - sensor.muhely_fagyaszto_plug_power
+              - sensor.alagsor_huto_plug_power
+              - sensor.teltocharge_power_active_import
+              - sensor.hmv_heater_power
+            entity_id: sensor.actual_power_generated
+            name: Solar
+            color: var(--success-color)
+      - entities:
+          - type: entity
+            children:
+              - sensor.eloszoba_floor_power
+              - sensor.emelet_floor_power
+              - sensor.furdo_floor_power
+              - sensor.airfel_klima_power
+              - sensor.gree_klima_power_ab
+              - sensor.alagsor_radiator_power
+              - sensor.szerverszoba_rack_power
+              - sensor.nappali_entertainment_power
+              - sensor.haloszoba_entertainment_power
+              - sensor.kert_lampa_power
+              - sensor.dolgozo_pc_power
+              - sensor.mosogep_plug_power
+              - sensor.dolgozo_hp_power
+              - sensor.konyha_imac_power
+              - sensor.muhely_fagyaszto_plug_power
+              - sensor.alagsor_huto_plug_power
+              - sensor.teltocharge_power_active_import
+              - sensor.hmv_heater_power
+              - other_power
+            entity_id: sensor.shelly_power_aggregated
+            name: Grid+Solar
+            color: cadetblue
+          - type: passthrough
+            children:
+              - sensor.eloszoba_floor_power
+            entity_id: sensor.eloszoba_floor_power
+          - type: passthrough
+            children:
+              - sensor.emelet_floor_power
+            entity_id: sensor.emelet_floor_power
+          - type: passthrough
+            children:
+              - sensor.furdo_floor_power
+            entity_id: sensor.furdo_floor_power
+          - type: passthrough
+            children:
+              - sensor.airfel_klima_power
+            entity_id: sensor.airfel_klima_power
+          - type: passthrough
+            children:
+              - sensor.gree_klima_power_ab
+            entity_id: sensor.gree_klima_power_ab
+          - type: passthrough
+            children:
+              - sensor.alagsor_radiator_power
+            entity_id: sensor.alagsor_radiator_power
+          - type: passthrough
+            children:
+              - sensor.szerverszoba_rack_power
+            entity_id: sensor.szerverszoba_rack_power
+          - type: passthrough
+            children:
+              - sensor.nappali_entertainment_power
+            entity_id: sensor.nappali_entertainment_power
+          - type: passthrough
+            children:
+              - sensor.haloszoba_entertainment_power
+            entity_id: sensor.haloszoba_entertainment_power
+          - type: passthrough
+            children:
+              - sensor.kert_lampa_power
+            entity_id: sensor.kert_lampa_power
+          - type: passthrough
+            children:
+              - sensor.dolgozo_pc_power
+            entity_id: sensor.dolgozo_pc_power
+          - type: passthrough
+            children:
+              - sensor.mosogep_plug_power
+            entity_id: sensor.mosogep_plug_power
+          - type: passthrough
+            children:
+              - sensor.dolgozo_hp_power
+            entity_id: sensor.dolgozo_hp_power
+          - type: passthrough
+            children:
+              - sensor.konyha_imac_power
+            entity_id: sensor.konyha_imac_power
+          - type: passthrough
+            children:
+              - sensor.muhely_fagyaszto_plug_power
+            entity_id: sensor.muhely_fagyaszto_plug_power
+          - type: passthrough
+            children:
+              - sensor.alagsor_huto_plug_power
+            entity_id: sensor.alagsor_huto_plug_power
+          - type: passthrough
+            children:
+              - sensor.teltocharge_power_active_import
+            entity_id: sensor.teltocharge_power_active_import
+          - type: passthrough
+            children:
+              - sensor.hmv_heater_power
+            entity_id: sensor.hmv_heater_power
+      - entities:
+          - type: entity
+            children: []
+            entity_id: sensor.eloszoba_floor_power
+          - type: entity
+            children: []
+            entity_id: sensor.emelet_floor_power
+          - type: entity
+            children: []
+            entity_id: sensor.furdo_floor_power
+          - type: entity
+            children: []
+            entity_id: sensor.airfel_klima_power
+          - type: entity
+            children: []
+            entity_id: sensor.gree_klima_power_ab
+          - type: entity
+            children: []
+            entity_id: sensor.alagsor_radiator_power
+          - type: entity
+            children: []
+            entity_id: sensor.szerverszoba_rack_power
+          - type: entity
+            children: []
+            entity_id: sensor.nappali_entertainment_power
+          - type: entity
+            children: []
+            entity_id: sensor.haloszoba_entertainment_power
+          - type: entity
+            children: []
+            entity_id: sensor.kert_lampa_power
+          - type: entity
+            children: []
+            entity_id: sensor.dolgozo_pc_power
+          - type: entity
+            children: []
+            entity_id: sensor.mosogep_plug_power
+          - type: entity
+            children: []
+            entity_id: sensor.dolgozo_hp_power
+          - type: entity
+            children: []
+            entity_id: sensor.konyha_imac_power
+          - type: entity
+            children: []
+            entity_id: sensor.muhely_fagyaszto_plug_power
+          - type: entity
+            children: []
+            entity_id: sensor.alagsor_huto_plug_power
+          - type: entity
+            children: []
+            entity_id: sensor.teltocharge_power_active_import
+          - type: entity
+            children: []
+            entity_id: sensor.hmv_heater_power
+          - type: remaining_parent_state
+            children: []
+            entity_id: other_power
+            name: Unmonitored
+            color: grey
+    type: custom:sankey-chart
+    show_names: true
+    wide: true
+    min_state: 0
+    show_icons: true
+    title: Electricity
+columns: 1
