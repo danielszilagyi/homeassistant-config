@@ -42,6 +42,23 @@ wallpanel:
                     --chip-spacing: 0px;
                     --chip-padding: 8px;
                   }
+            - type: custom:bar-card
+              entities:
+                - entity: sensor.e_up_battery_level
+                  name: e-up battery
+                  icon: mdi:car-battery
+                  severity:
+                    - color: green
+                      from: '50'
+                      to: '100'
+                    - color: orange
+                      to: '21'
+                      from: '49'
+                    - color: red
+                      from: '0'
+                      to: '20'
+                - entity: sensor.teltocharge_current_power
+                  max: 22000                  
               chips:
                 - type: conditional
                   conditions:
@@ -234,27 +251,6 @@ wallpanel:
           secondary_info_attribute: humidity
           name: Weather
           show_current: true
-    - square: false
-      columns: 1
-      type: grid
-      cards:
-        - type: custom:bar-card
-          entities:
-            - entity: sensor.e_up_battery_level
-              name: e-up battery
-              icon: mdi:car-battery
-              severity:
-                - color: green
-                  from: '50'
-                  to: '100'
-                - color: orange
-                  to: '21'
-                  from: '49'
-                - color: red
-                  from: '0'
-                  to: '20'
-            - entity: sensor.teltocharge_current_power
-              max: 22000
     - square: false
       columns: 3
       type: grid
