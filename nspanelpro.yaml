@@ -39,21 +39,18 @@ wallpanel:
                     --chip-padding: 8px;
                   }
               chips:
-                - type: conditional
-                  conditions:
-                    - entity: sensor.warnungen
-                      state: 'on'
+                - type: entity
                   chip:
                     type: entity
-                    entity: sensor.warnungen
-                    icon: mdi:weather-partly-lightning
+                    entity: sensor.wolf_dhk_bm2_0x30_340041_raumtemperatur
+                    icon: mdi:thermometer
                     tap_action:
                       action: none
-                    icon_color: red
+                    icon_color: blue
                     content_info: none
                 - type: conditional
                   conditions:
-                    - entity: input_boolean.mylo
+                    - entity: binary_sensor.gmiphone_focus
                       state: 'on'
                   chip:
                     type: entity
@@ -66,7 +63,7 @@ wallpanel:
                       state: 'on'
                   chip:
                     type: entity
-                    entity: input_boolean.gaste
+                    entity: binary_sensor.gmiphone_focus
                     icon_color: purple
                     content_info: none
                 - type: template
@@ -96,16 +93,16 @@ wallpanel:
                 - type: template
                   double_tap_action:
                     action: none
-                  entity: lock.turschloss
+                  entity: sensor.midea_ac_outdoor_temperature
                   icon: |
-                    {% if is_state('lock.turschloss', 'unlocked') %}
-                      mdi:lock-off
+                    {% if states('sensor.midea_ac_outdoor_temperature')|int > 0) %}
+                      weather-snowy
                     {%- else -%}
-                      mdi:lock
+                      weather-sunny
                     {%- endif %}
                   icon_color: |-
-                    {% if is_state('lock.turschloss', 'unlocked') %}
-                      green
+                    {% if states('sensor.midea_ac_outdoor_temperature')|int > 0 %}
+                      blue
                     {%- else -%}
                       red
                     {%- endif %}
