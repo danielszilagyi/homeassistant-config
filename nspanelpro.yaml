@@ -9,39 +9,25 @@ wallpanel:
       columns: 2
       type: grid
       cards:
-        - type: custom:digital-clock
-          locale: hu
-          card_mod:
-            style: |
-              ha-card {
-                --ha-card-box-shadow: none;
-                --ha-card-background: none;
-                --ha-card-spacing: 0px;
-                --ha-card-padding: 8px;
-              }
-          dateFormat:
-            weekday: long
-            day: 2-digit
-            month: short
-          timeFormat:
-            hour: 2-digit
-            minute: 2-digit
         - type: vertical-stack
           cards:
-            - type: custom:mushroom-entity-card
-              entity: sensor.wolf_dhk_bm2_0x30_340041_raumtemperatur
-              icon: mdi:thermometer
-              name: Belső hőmérséklet          
-            - type: custom:mushroom-chips-card
-              alignment: justify
+            - type: custom:digital-clock
+              locale: hu
               card_mod:
                 style: |
                   ha-card {
-                    --chip-box-shadow: none;
-                    --chip-background: none;
-                    --chip-spacing: 0px;
-                    --chip-padding: 8px;
+                    --ha-card-box-shadow: none;
+                    --ha-card-background: none;
+                    --ha-card-spacing: 0px;
+                    --ha-card-padding: 8px;
                   }
+              dateFormat:
+                weekday: long
+                day: 2-digit
+                month: short
+              timeFormat:
+                hour: 2-digit
+                minute: 2-digit
             - type: custom:bar-card
               entities:
                 - entity: sensor.e_up_battery_level
@@ -58,189 +44,17 @@ wallpanel:
                       from: '0'
                       to: '20'
                 - entity: sensor.teltocharge_current_power
-                  max: 22000                  
-              chips:
-                - type: conditional
-                  conditions:
-                    - entity: binary_sensor.gmiphone_focus
-                      state: 'on'
-                  chip:
-                    type: entity
-                    entity: input_boolean.mylo
-                    icon_color: purple
-                    content_info: none
-                - type: conditional
-                  conditions:
-                    - entity: input_boolean.gaste
-                      state: 'on'
-                  chip:
-                    type: entity
-                    entity: binary_sensor.gmiphone_focus
-                    icon_color: purple
-                    content_info: none
-                - type: template
-                  double_tap_action:
-                    action: none
-                  entity: alarm_control_panel.alarmo
-                  tap_action:
-                    action: navigate
-                    navigation_path: /nspanelpro-eg/alarmanlage
-                  hold_action:
-                    action: none
-                  icon: >-
-                    {% if is_state('alarm_control_panel.alarmo','disarmed') %}
-                      mdi:shield-off
-                    {%- elif is_state('alarm_control_panel.alarmo','armed_home')
-                    -%}
-                      mdi:shield-home
-                    {%- else -%}
-                      mdi:shield-lock
-                    {%- endif %}
-                  icon_color: |-
-                    {% if is_state('alarm_control_panel.alarmo','disarmed') %}
-                      green
-                    {%- else -%}
-                      red
-                    {%- endif %}
-                - type: template
-                  double_tap_action:
-                    action: none
-                  entity: sensor.midea_ac_outdoor_temperature
-                  icon: |
-                    {% if states('sensor.midea_ac_outdoor_temperature')|int > 0) %}
-                      weather-snowy
-                    {%- else -%}
-                      weather-sunny
-                    {%- endif %}
-                  icon_color: |-
-                    {% if states('sensor.midea_ac_outdoor_temperature')|int > 0 %}
-                      blue
-                    {%- else -%}
-                      red
-                    {%- endif %}
-                  tap_action:
-                    action: navigate
-                    navigation_path: /nspanelpro-eg/alarmanlage
-                  hold_action:
-                    action: none
-            - type: custom:mushroom-chips-card
-              alignment: end
-              card_mod:
-                style: |
-                  ha-card {
-                    --chip-box-shadow: none;
-                    --chip-background: none;
-                    --chip-spacing: 0px;
-                    --chip-padding: 8px;
-                  }
-              chips:
-                - type: conditional
-                  conditions:
-                    - entity: sensor.abfallnext
-                      state: '0'
-                  chip:
-                    type: entity
-                    entity: sensor.abfallnext
-                    content_info: none
-                    icon: mdi:trash-can
-                    tap_action:
-                      action: none
-                    icon_color: red
-                - type: conditional
-                  conditions:
-                    - entity: sensor.abfallnext
-                      state: '1'
-                  chip:
-                    type: entity
-                    entity: sensor.abfallnext
-                    content_info: none
-                    icon: mdi:trash-can
-                    tap_action:
-                      action: none
-                    icon_color: orange
-                - type: conditional
-                  conditions:
-                    - entity: sensor.batterylevelgering
-                      state: 'True'
-                    - entity: sensor.batterylevelkritisch
-                      state: 'False'
-                  chip:
-                    type: action
-                    double_tap_action:
-                      action: none
-                    icon: mdi:battery-40
-                    icon_color: orange
-                    tap_action:
-                      action: navigate
-                      navigation_path: /nspanelpro-eg/batterie
-                    hold_action:
-                      action: none
-                - type: conditional
-                  conditions:
-                    - entity: sensor.batterylevelkritisch
-                      state: 'True'
-                  chip:
-                    - type: action
-                      double_tap_action:
-                        action: none
-                      icon: mdi:battery-20
-                      icon_color: red
-                      tap_action:
-                        action: navigate
-                        navigation_path: /nspanelpro-eg/batterie
-                      hold_action:
-                        action: none
-                - type: conditional
-                  conditions:
-                    - entity: group.updates
-                      state: 'on'
-                  chip:
-                    type: template
-                    double_tap_action:
-                      action: more-info
-                    icon: mdi:shield-alert
-                    content_info: none
-                    tap_action:
-                      action: none
-                    hold_action:
-                      action: more-info
-                    icon_color: |2-
-                        {% if is_state('group.updates', 'on') %}
-                          amber
-                        {%- else -%}
-                          gray
-                        {%- endif %}
-                - type: conditional
-                  conditions:
-                    - entity: binary_sensor.luftfeuchtigkeit_bin
-                      state: 'on'
-                  chip:
-                    type: template
-                    double_tap_action:
-                      action: more-info
-                    icon: mdi:water-percent-alert
-                    content_info: none
-                    tap_action:
-                      action: none
-                    hold_action:
-                      action: more-info
-                    icon_color: >-
-                      {% if (is_state('binary_sensor.luftfeuchtigkeit_bin','on')
-                      ) %}
-                        blue
-                      {%- else -%}
-                        gray
-                      {%- endif %}
-                        
-                - type: entity
-                  entity: sensor.stromverbrauch
-                  use_entity_picture: false
-                  double_tap_action:
-                    action: more-info
-                  tap_action:
-                    action: none
-                  hold_action:
-                    action: more-info
+                  max: 22000
+        - type: vertical-stack
+          cards:
+            - type: custom:mushroom-entity-card
+              entity: sensor.wolf_dhk_bm2_0x30_340041_raumtemperatur
+              icon: mdi:home-thermometer-outline
+              name: Belső hőmérséklet
+            - type: custom:mushroom-entity-card
+              entity: sensor.midea_ac_outdoor_temperature
+              icon: mdi:home-thermometer
+              name: Külső hőmérséklet
     - square: false
       columns: 1
       type: grid
