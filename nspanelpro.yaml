@@ -28,8 +28,12 @@ wallpanel:
             minute: 2-digit
         - type: vertical-stack
           cards:
+            - type: custom:mushroom-entity-card
+              entity: sensor.wolf_dhk_bm2_0x30_340041_raumtemperatur
+              icon: mdi:thermometer
+              name: Belső hőmérséklet          
             - type: custom:mushroom-chips-card
-              alignment: end
+              alignment: justify
               card_mod:
                 style: |
                   ha-card {
@@ -39,15 +43,6 @@ wallpanel:
                     --chip-padding: 8px;
                   }
               chips:
-                - type: entity
-                  chip:
-                    type: entity
-                    entity: sensor.wolf_dhk_bm2_0x30_340041_raumtemperatur
-                    icon: mdi:thermometer
-                    tap_action:
-                      action: none
-                    icon_color: blue
-                    content_info: none
                 - type: conditional
                   conditions:
                     - entity: binary_sensor.gmiphone_focus
