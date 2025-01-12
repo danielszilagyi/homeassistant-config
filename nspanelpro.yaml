@@ -1,0 +1,504 @@
+views: []
+title: Home
+wallpanel:
+  enabled: true
+  idle_time: 1
+  image_url: https://picsum.photos/${width}/${height}?random=${timestamp}
+  cards:
+    - square: false
+      columns: 2
+      type: grid
+      cards:
+        - type: custom:digital-clock
+          locale: hu
+          card_mod:
+            style: |
+              ha-card {
+                --ha-card-box-shadow: none;
+                --ha-card-background: none;
+                --ha-card-spacing: 0px;
+                --ha-card-padding: 8px;
+              }
+          dateFormat:
+            weekday: long
+            day: 2-digit
+            month: short
+          timeFormat:
+            hour: 2-digit
+            minute: 2-digit
+        - type: vertical-stack
+          cards:
+            - type: custom:mushroom-chips-card
+              alignment: end
+              card_mod:
+                style: |
+                  ha-card {
+                    --chip-box-shadow: none;
+                    --chip-background: none;
+                    --chip-spacing: 0px;
+                    --chip-padding: 8px;
+                  }
+              chips:
+                - type: conditional
+                  conditions:
+                    - entity: sensor.warnungen
+                      state: 'on'
+                  chip:
+                    type: entity
+                    entity: sensor.warnungen
+                    icon: mdi:weather-partly-lightning
+                    tap_action:
+                      action: none
+                    icon_color: red
+                    content_info: none
+                - type: conditional
+                  conditions:
+                    - entity: input_boolean.mylo
+                      state: 'on'
+                  chip:
+                    type: entity
+                    entity: input_boolean.mylo
+                    icon_color: purple
+                    content_info: none
+                - type: conditional
+                  conditions:
+                    - entity: input_boolean.gaste
+                      state: 'on'
+                  chip:
+                    type: entity
+                    entity: input_boolean.gaste
+                    icon_color: purple
+                    content_info: none
+                - type: template
+                  double_tap_action:
+                    action: none
+                  entity: alarm_control_panel.alarmo
+                  tap_action:
+                    action: navigate
+                    navigation_path: /nspanelpro-eg/alarmanlage
+                  hold_action:
+                    action: none
+                  icon: >-
+                    {% if is_state('alarm_control_panel.alarmo','disarmed') %}
+                      mdi:shield-off
+                    {%- elif is_state('alarm_control_panel.alarmo','armed_home')
+                    -%}
+                      mdi:shield-home
+                    {%- else -%}
+                      mdi:shield-lock
+                    {%- endif %}
+                  icon_color: |-
+                    {% if is_state('alarm_control_panel.alarmo','disarmed') %}
+                      green
+                    {%- else -%}
+                      red
+                    {%- endif %}
+                - type: template
+                  double_tap_action:
+                    action: none
+                  entity: lock.turschloss
+                  icon: |
+                    {% if is_state('lock.turschloss', 'unlocked') %}
+                      mdi:lock-off
+                    {%- else -%}
+                      mdi:lock
+                    {%- endif %}
+                  icon_color: |-
+                    {% if is_state('lock.turschloss', 'unlocked') %}
+                      green
+                    {%- else -%}
+                      red
+                    {%- endif %}
+                  tap_action:
+                    action: navigate
+                    navigation_path: /nspanelpro-eg/alarmanlage
+                  hold_action:
+                    action: none
+            - type: custom:mushroom-chips-card
+              alignment: end
+              card_mod:
+                style: |
+                  ha-card {
+                    --chip-box-shadow: none;
+                    --chip-background: none;
+                    --chip-spacing: 0px;
+                    --chip-padding: 8px;
+                  }
+              chips:
+                - type: conditional
+                  conditions:
+                    - entity: sensor.abfallnext
+                      state: '0'
+                  chip:
+                    type: entity
+                    entity: sensor.abfallnext
+                    content_info: none
+                    icon: mdi:trash-can
+                    tap_action:
+                      action: none
+                    icon_color: red
+                - type: conditional
+                  conditions:
+                    - entity: sensor.abfallnext
+                      state: '1'
+                  chip:
+                    type: entity
+                    entity: sensor.abfallnext
+                    content_info: none
+                    icon: mdi:trash-can
+                    tap_action:
+                      action: none
+                    icon_color: orange
+                - type: conditional
+                  conditions:
+                    - entity: sensor.batterylevelgering
+                      state: 'True'
+                    - entity: sensor.batterylevelkritisch
+                      state: 'False'
+                  chip:
+                    type: action
+                    double_tap_action:
+                      action: none
+                    icon: mdi:battery-40
+                    icon_color: orange
+                    tap_action:
+                      action: navigate
+                      navigation_path: /nspanelpro-eg/batterie
+                    hold_action:
+                      action: none
+                - type: conditional
+                  conditions:
+                    - entity: sensor.batterylevelkritisch
+                      state: 'True'
+                  chip:
+                    - type: action
+                      double_tap_action:
+                        action: none
+                      icon: mdi:battery-20
+                      icon_color: red
+                      tap_action:
+                        action: navigate
+                        navigation_path: /nspanelpro-eg/batterie
+                      hold_action:
+                        action: none
+                - type: conditional
+                  conditions:
+                    - entity: group.updates
+                      state: 'on'
+                  chip:
+                    type: template
+                    double_tap_action:
+                      action: more-info
+                    icon: mdi:shield-alert
+                    content_info: none
+                    tap_action:
+                      action: none
+                    hold_action:
+                      action: more-info
+                    icon_color: |2-
+                        {% if is_state('group.updates', 'on') %}
+                          amber
+                        {%- else -%}
+                          gray
+                        {%- endif %}
+                - type: conditional
+                  conditions:
+                    - entity: binary_sensor.luftfeuchtigkeit_bin
+                      state: 'on'
+                  chip:
+                    type: template
+                    double_tap_action:
+                      action: more-info
+                    icon: mdi:water-percent-alert
+                    content_info: none
+                    tap_action:
+                      action: none
+                    hold_action:
+                      action: more-info
+                    icon_color: >-
+                      {% if (is_state('binary_sensor.luftfeuchtigkeit_bin','on')
+                      ) %}
+                        blue
+                      {%- else -%}
+                        gray
+                      {%- endif %}
+                        
+                - type: entity
+                  entity: sensor.stromverbrauch
+                  use_entity_picture: false
+                  double_tap_action:
+                    action: more-info
+                  tap_action:
+                    action: none
+                  hold_action:
+                    action: more-info
+    - square: false
+      columns: 1
+      type: grid
+      cards:
+        - type: weather-forecast
+          entity: weather.home
+          forecast_type: hourly
+          secondary_info_attribute: humidity
+          name: Weather
+          show_current: true
+    - square: false
+      columns: 1
+      type: grid
+      cards:
+        - type: custom:bar-card
+          entities:
+            - entity: sensor.e_up_battery_level
+              name: e-up battery
+              icon: mdi:car-battery
+              severity:
+                - color: green
+                  from: '50'
+                  to: '100'
+                - color: orange
+                  to: '21'
+                  from: '49'
+                - color: red
+                  from: '0'
+                  to: '20'
+            - entity: sensor.teltocharge_current_power
+              max: 22000
+    - square: false
+      columns: 3
+      type: grid
+      cards:
+        - type: custom:mushroom-template-card
+          primary: Licht
+          secondary: |-
+            {% if (states('sensor.total_lights_on')| int > 0) %}
+              {{ states('sensor.total_lights_on') }}
+            {%- else -%}
+              aus
+            {%- endif %}
+          icon: mdi:lightbulb
+          entity: sensor.total_lights_on
+          fill_container: true
+          icon_color: |2-
+                      {% if states('sensor.total_lights_on') | int > 0 %}
+                        amber
+                      {%- else -%}
+                        lightgray
+                      {%- endif %}
+          layout: vertical
+          tap_action:
+            action: navigate
+            navigation_path: /nspanelpro-eg/licht
+          badge_color: ''
+          badge_icon: ''
+        - type: custom:mushroom-template-card
+          primary: Ablakok
+          secondary: |-
+            {% if states('sensor.total_open_windows') | int > 0 %}
+              {{ states('sensor.total_open_windows') }} 
+            {%- else -%}
+              zárva
+            {%- endif %}
+          icon: >-
+            {% if states('sensor.total_open_windows') | int > 0 %}
+              mdi:window-open-variant
+            {%- else -%}
+              mdi:window-closed-variant
+            {%- endif %}
+          entity: sensor.total_open_windows
+          fill_container: true
+          layout: vertical
+          icon_color: |-
+            {% if states('sensor.total_open_windows')| int > 0 %}
+              amber
+            {%- else -%}
+              gray
+            {%- endif %}
+          multiline_secondary: false
+          badge_color: ''
+        - type: custom:mushroom-template-card
+          primary: Garázskapu
+          secondary: >-
+            {% if states('binary_sensor.garazskapu_doorsensor_contact') != 'closed' %}
+              {{ states('binary_sensor.garazskapu_doorsensor_contact') }}
+            {%- else -%}
+              zárva
+            {%- endif %}
+          icon: >-
+            {% if states('binary_sensor.garazskapu_doorsensor_contact') != 'closed' %}
+              mdi:door-open
+            {%- else -%}
+              mdi:door-closed
+            {%- endif %}
+          entity: binary_sensor.garazskapu_doorsensor_contact
+          fill_container: true
+          layout: vertical
+          icon_color: >-
+            {% if states('binary_sensor.garazskapu_doorsensor_contact') | int > 0 %}
+              red 
+            {%- elif states('binary_sensor.garazskapu_doorsensor_contact') | int > 0 -%}
+              orange
+            {%- else -%}
+              gray
+            {%- endif %}
+          badge_icon: |-
+            {% if states('lock.turschloss') == 'locked' %}
+              mdi:lock
+            {%- else -%}
+              mdi:lock-off
+            {%- endif %}
+          badge_color: |-
+            {% if states('lock.turschloss') == 'locked' %}
+              red
+            {%- else -%}
+              green
+            {%- endif %}
+          multiline_secondary: false
+        - type: custom:mushroom-template-card
+          primary: Waschen
+          secondary: |2-
+                    {% if (is_state('input_select.state_washingmachine','Standby') ) %}
+                      bereit
+                    {% elif (is_state('input_select.state_washingmachine','Waschen') ) %}
+                      aktiv
+                    {%- else -%}
+                      fertig
+                    {%- endif %}
+          icon: |2-
+                    {% if (is_state('input_select.state_washingmachine','Standby') ) %}
+                      mdi:washing-machine-off
+                    {% elif (is_state('input_select.state_washingmachine','Waschen') ) %}
+                      mdi:washing-machine
+                    {%- else -%}
+                      mdi:washing-machine-alert
+                    {%- endif %}
+          entity: input_select.state_washingmachine
+          fill_container: true
+          icon_color: |2-
+                    {% if (is_state('input_select.state_washingmachine','Standby') ) %}
+                      gray
+                    {% elif (is_state('input_select.state_washingmachine','Waschen') ) %}
+                      blue
+                    {%- else -%}
+                      orange
+                    {%- endif %}
+          layout: vertical
+          tap_action:
+            action: navigate
+            navigation_path: /nspanelpro-eg/waesche
+          badge_color: |2-
+                    {% if (is_state('input_select.state_washingmachine','Fertig') ) %}
+                      orange
+                    {%- endif %}
+          badge_icon: |2-
+                    {% if (is_state('input_select.state_washingmachine','Fertig') ) %}
+                      mdi:washing-machine-alert
+                    {%- endif %}
+        - type: custom:mushroom-template-card
+          primary: Trockner
+          secondary: |2-
+                    {% if (is_state('input_select.state_trockner','Standby') ) %}
+                      bereit
+                    {% elif (is_state('input_select.state_trockner','Trocknen') ) %}
+                      aktiv
+                    {%- else -%}
+                      fertig
+                    {%- endif %}
+          icon: |2-
+                    {% if (is_state('input_select.state_trockner','Standby') ) %}
+                      mdi:washing-machine-off
+                    {% elif (is_state('input_select.state_trockner','Trocknen') ) %}
+                      mdi:washing-machine
+                    {%- else -%}
+                      mdi:washing-machine-alert
+                    {%- endif %}
+          entity: input_select.state_trockner
+          fill_container: true
+          icon_color: |2-
+                    {% if (is_state('input_select.state_trockner','Standby') ) %}
+                      gray
+                    {% elif (is_state('input_select.state_trockner','Trocknen') ) %}
+                      blue
+                    {%- else -%}
+                      orange
+                    {%- endif %}
+          layout: vertical
+          tap_action:
+            action: navigate
+            navigation_path: /nspanelpro-eg/waesche
+          badge_color: |2-
+                    {% if (is_state('input_select.state_trockner','Beendet') ) %}
+                      orange
+                    {%- endif %}
+          badge_icon: |2-
+                    {% if (is_state('input_select.state_trockner','Beendet') ) %}
+                      mdi:washing-machine-alert
+                    {%- endif %}
+        - type: custom:mushroom-template-card
+          primary: Luftfeuchte
+          secondary: |2-
+                    {% if (is_state('binary_sensor.luftfeuchtigkeit_bin','on') ) %}
+                      zu hoch
+                    {%- else -%}
+                      normal
+                    {%- endif %}
+          icon: mdi:water-percent-alert
+          entity: binary_sensor.luftfeuchtigkeit_max
+          fill_container: true
+          layout: vertical
+          tap_action:
+            action: more-info
+          hold_action:
+            action: none
+          double_tap_action:
+            action: none
+          badge_color: ''
+          icon_color: |2-
+                    {% if (is_state('binary_sensor.luftfeuchtigkeit_bin','on') ) %}
+                      blue
+                    {%- else -%}
+                      gray
+                    {%- endif %}
+          badge_icon: ''
+  profile_entity: input_select.wallpanel
+  profiles:
+    day:
+      image_url: https://picsum.photos/${width}/${height}?random=${timestamp}
+      style:
+        wallpanel-screensaver-container:
+          background-color: '#333333dd'
+        wallpanel-screensaver-info-box:
+          '--wp-card-width': 430px
+          '--wp-card-margin': 1px
+          '--wp-card-padding': 0px
+          '--wp-card-backdrop-filter': none
+          background-color: '#ffffff99'
+          box-shadow: >-
+            0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0,
+            0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12)
+        wallpanel-screensaver-info-box-content:
+          '--ha-card-box-shadow': none
+          '--ha-card-background': none
+          '--ha-card-border-width': 0px
+          '--primary-background-color': '#202020'
+          '--secondary-background-color': '#e5e5e5'
+          '--primary-text-color': '#212121'
+          '--secondary-text-color': '#727272'
+    night:
+      image_url: https://picsum.photos/${width}/${height}?random=${timestamp}
+      style:
+        wallpanel-screensaver-info-box:
+          '--wp-card-width': 430px
+          '--wp-card-margin': 1px
+          '--wp-card-padding': 0px
+          '--wp-card-backdrop-filter': none
+          background-color: '#00000099'
+          box-shadow: >-
+            0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0,
+            0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12)
+        wallpanel-screensaver-info-box-content:
+          '--ha-card-background': none
+          '--ha-card-box-shadow': none
+          '--primary-background-color': '#111111'
+          '--secondary-background-color': '#202020'
+          '--primary-text-color': '#e1e1e1'
+          '--secondary-text-color': '#9b9b9b'
