@@ -1,8 +1,14 @@
-views: []
+views:
+  - type: masonry
+    path: nspanel
+    title: NSPanel
+    cards: []
 title: Home
 wallpanel:
   enabled: true
+  debug: false
   idle_time: 1
+  info_move_interval: 0.3
   image_url: https://picsum.photos/${width}/${height}?random=${timestamp}
   cards:
     - square: false
@@ -75,7 +81,7 @@ wallpanel:
             {% if (states('sensor.total_lights_on')| int > 0) %}
               {{ states('sensor.total_lights_on') }}
             {%- else -%}
-              aus
+              off
             {%- endif %}
           icon: mdi:lightbulb
           entity: sensor.total_lights_on
@@ -87,9 +93,6 @@ wallpanel:
                         lightgray
                       {%- endif %}
           layout: vertical
-          tap_action:
-            action: navigate
-            navigation_path: /nspanelpro-eg/licht
           badge_color: ''
           badge_icon: ''
         - type: custom:mushroom-template-card
@@ -100,7 +103,7 @@ wallpanel:
             {%- else -%}
               zárva
             {%- endif %}
-          icon: >-
+          icon: |-
             {% if states('sensor.total_open_windows') | int > 0 %}
               mdi:window-open-variant
             {%- else -%}
@@ -120,13 +123,14 @@ wallpanel:
         - type: custom:mushroom-template-card
           primary: Garázskapu
           secondary: >-
-            {% if states('binary_sensor.garazskapu_doorsensor_contact') != 'closed' %}
+            {% if states('binary_sensor.garazskapu_doorsensor_contact') !=
+            'off' %}
               {{ states('binary_sensor.garazskapu_doorsensor_contact') }}
             {%- else -%}
               zárva
             {%- endif %}
           icon: >-
-            {% if states('binary_sensor.garazskapu_doorsensor_contact') != 'closed' %}
+            {% if states('binary_sensor.garazskapu_doorsensor_contact') == 'on' %}
               mdi:door-open
             {%- else -%}
               mdi:door-closed
@@ -135,132 +139,26 @@ wallpanel:
           fill_container: true
           layout: vertical
           icon_color: >-
-            {% if states('binary_sensor.garazskapu_doorsensor_contact') | int > 0 %}
+            {% if states('binary_sensor.garazskapu_doorsensor_contact') == 'on' %}
               red 
-            {%- elif states('binary_sensor.garazskapu_doorsensor_contact') | int > 0 -%}
-              orange
+            {%- elif states('binary_sensor.garazskapu_doorsensor_contact') == 'off' %}
+              green
             {%- else -%}
               gray
             {%- endif %}
           badge_icon: |-
-            {% if states('lock.turschloss') == 'locked' %}
+            {% if states('binary_sensor.garazskapu_doorsensor_contact') == 'off' %}
               mdi:lock
             {%- else -%}
               mdi:lock-off
             {%- endif %}
           badge_color: |-
-            {% if states('lock.turschloss') == 'locked' %}
+            {% if states('binary_sensor.garazskapu_doorsensor_contact') == 'off' %}
               red
             {%- else -%}
               green
             {%- endif %}
           multiline_secondary: false
-        - type: custom:mushroom-template-card
-          primary: Waschen
-          secondary: |2-
-                    {% if (is_state('input_select.state_washingmachine','Standby') ) %}
-                      bereit
-                    {% elif (is_state('input_select.state_washingmachine','Waschen') ) %}
-                      aktiv
-                    {%- else -%}
-                      fertig
-                    {%- endif %}
-          icon: |2-
-                    {% if (is_state('input_select.state_washingmachine','Standby') ) %}
-                      mdi:washing-machine-off
-                    {% elif (is_state('input_select.state_washingmachine','Waschen') ) %}
-                      mdi:washing-machine
-                    {%- else -%}
-                      mdi:washing-machine-alert
-                    {%- endif %}
-          entity: input_select.state_washingmachine
-          fill_container: true
-          icon_color: |2-
-                    {% if (is_state('input_select.state_washingmachine','Standby') ) %}
-                      gray
-                    {% elif (is_state('input_select.state_washingmachine','Waschen') ) %}
-                      blue
-                    {%- else -%}
-                      orange
-                    {%- endif %}
-          layout: vertical
-          tap_action:
-            action: navigate
-            navigation_path: /nspanelpro-eg/waesche
-          badge_color: |2-
-                    {% if (is_state('input_select.state_washingmachine','Fertig') ) %}
-                      orange
-                    {%- endif %}
-          badge_icon: |2-
-                    {% if (is_state('input_select.state_washingmachine','Fertig') ) %}
-                      mdi:washing-machine-alert
-                    {%- endif %}
-        - type: custom:mushroom-template-card
-          primary: Trockner
-          secondary: |2-
-                    {% if (is_state('input_select.state_trockner','Standby') ) %}
-                      bereit
-                    {% elif (is_state('input_select.state_trockner','Trocknen') ) %}
-                      aktiv
-                    {%- else -%}
-                      fertig
-                    {%- endif %}
-          icon: |2-
-                    {% if (is_state('input_select.state_trockner','Standby') ) %}
-                      mdi:washing-machine-off
-                    {% elif (is_state('input_select.state_trockner','Trocknen') ) %}
-                      mdi:washing-machine
-                    {%- else -%}
-                      mdi:washing-machine-alert
-                    {%- endif %}
-          entity: input_select.state_trockner
-          fill_container: true
-          icon_color: |2-
-                    {% if (is_state('input_select.state_trockner','Standby') ) %}
-                      gray
-                    {% elif (is_state('input_select.state_trockner','Trocknen') ) %}
-                      blue
-                    {%- else -%}
-                      orange
-                    {%- endif %}
-          layout: vertical
-          tap_action:
-            action: navigate
-            navigation_path: /nspanelpro-eg/waesche
-          badge_color: |2-
-                    {% if (is_state('input_select.state_trockner','Beendet') ) %}
-                      orange
-                    {%- endif %}
-          badge_icon: |2-
-                    {% if (is_state('input_select.state_trockner','Beendet') ) %}
-                      mdi:washing-machine-alert
-                    {%- endif %}
-        - type: custom:mushroom-template-card
-          primary: Luftfeuchte
-          secondary: |2-
-                    {% if (is_state('binary_sensor.luftfeuchtigkeit_bin','on') ) %}
-                      zu hoch
-                    {%- else -%}
-                      normal
-                    {%- endif %}
-          icon: mdi:water-percent-alert
-          entity: binary_sensor.luftfeuchtigkeit_max
-          fill_container: true
-          layout: vertical
-          tap_action:
-            action: more-info
-          hold_action:
-            action: none
-          double_tap_action:
-            action: none
-          badge_color: ''
-          icon_color: |2-
-                    {% if (is_state('binary_sensor.luftfeuchtigkeit_bin','on') ) %}
-                      blue
-                    {%- else -%}
-                      gray
-                    {%- endif %}
-          badge_icon: ''
   profile_entity: input_select.wallpanel
   profiles:
     day:
